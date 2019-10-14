@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="throttle">节流函数</button>
+    <button id="debounce">防抖函数</button>
+
+    <script>
+        //处理点击事件的回调函数
+        function handleClick() {
+            console.log('处理点击事件')
+        }
+
+        /*
+        实现函数节流的函数
+        */
+        function throttle(callback, dalay) {
+            let start = 0; //必须保证第一次的立即调用
+            return function () { //它的this是谁就得callback（）中的this是谁，它几首的所有参数都直接交给callback()
+                console.log('throttle事件')
+                const current = Date.now()
+                if (current - start > dalay) { //第2次点击开始，需要间隔事件超过dalay
+                    callback.apply(this, arguments)
+                    start = current;
+                }
+
+            }
+        }
+        document.getElementById('throttle').onclick = throttle(handleClick, 1000);
+
+        /*实现函数防抖的函数*/
+        function debounce(callback, dalay) {
+            return function () {
+                console.log('debounce事件')
+                //每隔dalay的时间，启动一个新的延迟定时器，去准备调用callback
+                const that = this;
+                const agr = arguments;
+                if(callback.timeOutId){
+                    clearTimeout(callback.timeOutId)
+                }
+                callback.timeOutId = setTimeout(function(){
+                    callback.apply(that,agr)
+                    clearTimeout(callback.timeOutId)
+                },dalay)
+            }
+        }
+        document.getElementById('debounce').onclick = debounce(handleClick, 1000);
+    </script>
+</body>
+
+</html>
